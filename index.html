@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Location Validator</title>
+    <link href="bootstrap.min.css" rel="stylesheet">
+    <style>
+       #map {
+        height: 400px;
+        width: 100%;
+       }
+        .container {
+            max-width: 50%;
+            margin-top: 3rem;
+            text-align: center;
+        }
+        h1, h4 {
+            margin-bottom: 1rem;
+        }
+        button {
+            margin: 0.75rem auto;
+        }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Location Validator</h1>
+      <div>
+        <h4>Enter Location to Validate</h4>
+        <textarea type="text" id="input_add" class="md-textarea form-control" placeholder="Address"></textarea>
+        <br>
+        <button id="check" class="btn btn-success">Check</button>
+        </div>
+        <div><p id="result"></p></div>
+        <div id="map"></div>
+    </div>
+    
+    <script type="text/javascript" src="jquery-3.1.1.min.js"></script>
+    <script>
+        $('#check').click(function() {
+                var API_KEY = "AIzaSyDTpsi90NQ2-WqP3_DDy9wSj3d7VJucZs4";
+	            var input_add = document.getElementById('input_add').value;
+                var adr_url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + input_add + "&key=" + API_KEY;
+                $.getJSON(adr_url, function(data) {
+                    console.log(data);
+                    if (data.status == "OK") {
+                        $('#result').html("Entered location is <strong>valid</strong>.");
+                    
+                        var Latitude = data.results[0].geometry.location.lat;
+                        var Longitude = data.results[0].geometry.location.lng;
+                        
+                        if ($('#map')) {
+                            $('#map').css({"display" : "block",
+                                           "border" : "2px solid #333"});
+                        }
+                        
+                        var loc = {
+                            lat: Latitude,
+                            lng: Longitude
+                        };
+                        var map = new google.maps.Map(document.getElementById('map'), {
+                            zoom: 10,
+                            center: loc
+                        });
+                        var marker = new google.maps.Marker({
+                            position: loc,
+                            map: map
+                        });
+                        
+                        
+                    } else {
+                        $('#result').html("Entered location is <strong>Invalid</strong>.");
+                        if ($('#map')) {
+                            $('#map').css({"display": "none"});
+                        }
+                    }
+                    
+                });
+        });
+    </script>
+    <script async defer
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDTpsi90NQ2-WqP3_DDy9wSj3d7VJucZs4">
+    </script>
+  </body>
+</html>
